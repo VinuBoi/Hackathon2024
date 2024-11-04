@@ -100,7 +100,8 @@
         document.getElementById("user_input").addEventListener("keydown", function (e) {
           if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            sendMessage()
+            sendMessage();
+            scrollToBottom();
           }
         })
 
@@ -131,6 +132,14 @@
           var botDiv = document.querySelector(".botDiv:last-of-type")
           message_history.push({role: "assistant", content: response})
           botDiv.textContent = "Bot: " + response
+        }
+        let scrollableDiv = 
+            document.getElementById('scrollableDiv');
+
+        // Function to scroll to the bottom of the div
+        function scrollToBottom() {
+            scrollableDiv.scrollTop = scrollableDiv
+                .scrollHeight;
         }
       </script>
   </body>
