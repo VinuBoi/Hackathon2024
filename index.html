@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #chatbox {
+        whitespace: pre;
+      }
+      
+      .userDiv {
+        color: black;
+      }
+
+      .botDiv {
+        color: blue;
+      }
+      #input_box {
+        display: flex;
+        justify-content: left;
+      }
+      
+    </style>
+    
+    <base target="_top">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  </head>
+  <body>
+      <label for="user_input">Enter Text:</label>
+      <div id="input_box">
+        <textarea id="user_input" name="messages" placeholder="What is the square root of 2?" rows="2" cols="50"></textarea>
+        <button type="button" value="Send" onclick="sendMessage()">Send</button>
+      </div>
+      <br>
+      <div id="chatbox">
+      
+      </div>
+  </body>
+  <script>
+      var message_history = []
+      document.getElementById("user_input").addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && !e.shiftkey) {
+          e.preventDefault();
+          sendMessage()
+        }
+      })
+
+      function sendMessage() {
+        var message = document.getElementById("user_input").value
+        message_history.push({role: "user", content: message})
+        var userDiv = document.createElement("div")
+        userDiv.setAttribute("class", "userDiv")
+        userDiv.innerHTML = "You: " + message
+        document.getElementById("chatbox").appendChild(userDiv)
+        document.getElementById("user_input").value = ""
+        
+
+        var botDiv = document.createElement("div")
+        botDiv.setAttribute("class", "botDiv")
+        botDiv.innerHTML = "Bot: ..."
+        document.getElementById("chatbox").appendChild(botDiv)
+
+        google.script.run.withSuccessHandler(receiveMessage).publicAPICaller(message_history)
+      }
+
+      function receiveMessage(response) {
+        //this function isn't part of sendMessage because of how apps script works
+        var botDiv = document.querySelector(".botDiv:last-of-type")
+        message_history.push({role: "assistant", content: response})
+        botDiv.innerHTML = "Bot: " + response
+      }
+    </script>
+</html>

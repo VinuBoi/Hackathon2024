@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      /* Base styling for dark, futuristic tech theme */
+      body {
+        background-color: #121212; /* Dark background */
+        color: #e0e0e0; /* Light text for readability */
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+
+      #chatbox {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #1e1e1e; /* Darker background for chat area */
+        border-radius: 8px;
+        max-height: 400px;
+        overflow-y: auto;
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); /* Subtle neon glow */
+      }
+
+      .userDiv, .botDiv {
+        padding: 8px 12px;
+        margin: 5px 0;
+        border-radius: 5px;
+        max-width: 80%;
+      }
+
+      .userDiv {
+        color: #00e676; /* Greenish color for user messages */
+        background-color: #1b5e20; /* Dark green background */
+        align-self: flex-start;
+      }
+
+      .botDiv {
+        color: #29b6f6; /* Light blue color for bot messages */
+        background-color: #0d47a1; /* Dark blue background */
+        align-self: flex-end;
+      }
+
+      #input_box {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-top: 20px;
+      }
+
+      #user_input {
+        width: 100%;
+        max-width: 600px;
+        padding: 10px;
+        border: 1px solid #555;
+        border-radius: 4px;
+        background-color: #333;
+        color: #e0e0e0;
+        font-size: 1rem;
+        resize: none;
+      }
+
+      button {
+        padding: 10px 20px;
+        background-color: #29b6f6; /* Accent color for button */
+        color: #121212;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #00e676; /* Hover color for interactivity */
+      }
+
+      /* Scrollbar customization */
+      #chatbox::-webkit-scrollbar {
+        width: 8px;
+      }
+      #chatbox::-webkit-scrollbar-thumb {
+        background-color: #29b6f6;
+        border-radius: 4px;
+      }
+    </style>
+    
+    <base target="_top">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  </head>
+  <body>
+      <label for="user_input">Enter Text:</label>
+      <div id="input_box">
+        <textarea id="user_input" name="messages" placeholder="Type your message here..." rows="2" cols="50"></textarea>
+        <button type="button" value="Send" onclick="sendMessage()">Send</button>
+      </div>
+      <div id="chatbox"></div>
+
+      <script>
+        var message_history = []
+        document.getElementById("user_input").addEventListener("keydown", function (e) {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage()
+          }
+        })
+
+        function sendMessage() {
+          var message = document.getElementById("user_input").value
+          if (!message.trim()) return; // Prevent sending empty messages
+          
+          message_history.push({role: "user", content: message})
+
+          // Create and append user's message
+          var userDiv = document.createElement("div")
+          userDiv.className = "userDiv"
+          userDiv.textContent = "You: " + message
+          document.getElementById("chatbox").appendChild(userDiv)
+          document.getElementById("user_input").value = ""
+          
+          // Placeholder for bot's response
+          var botDiv = document.createElement("div")
+          botDiv.className = "botDiv"
+          botDiv.textContent = "Bot: ..."
+          document.getElementById("chatbox").appendChild(botDiv)
+
+          // Call server and replace "..." with actual response
+          google.script.run.withSuccessHandler(receiveMessage).publicAPICaller(message_history)
+        }
+
+        function receiveMessage(response) {
+          var botDiv = document.querySelector(".botDiv:last-of-type")
+          message_history.push({role: "assistant", content: response})
+          botDiv.textContent = "Bot: " + response
+        }
+      </script>
+  </body>
+</html>
