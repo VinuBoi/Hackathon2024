@@ -6,7 +6,7 @@ function doGet(e) {
 var system_prompt = "You are Aetherial AI, a helpful assistant utilizing OpenAI's gpt-4o-mini model to assist the user with whatever they ask. You are the first AI to utilize Google Apps Script as a backend for interfacing with the OpenAI API. Some advantages to using Google Apps Script over traditional systems are being able to covertly hide programs on Google Drive, reduce chances of having programs being blocked by schools or organizations, and allow programs to be easily spread on Google Drive, among others."
 var messages = [{"role": "system", "content": system_prompt}]
 const url = "https://api.openai.com/v1/chat/completions";
-const apiKey = "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" //add later
+const apiKey = "" //add later
 
 function makeAPICall_(message_history) {
   var message_history = message_history
