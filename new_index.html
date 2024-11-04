@@ -2,54 +2,59 @@
 <html>
   <head>
     <style>
+      
       /* Base styling for dark, futuristic tech theme */
-      body {
+      body { /* the entire background */
         background-color: #121212; /* Dark background */
         color: #e0e0e0; /* Light text for readability */
-        font-family: 'Arial', sans-serif;
+        font-family: 'Comic Sans', sans-serif;
         margin: 0;
         padding: 20px;
       }
 
-      #chatbox {
+      #chatbox { /* The logs of the chats that contains the userDivs and botDivs */
         margin-top: 20px;
         padding: 15px;
         background-color: #1e1e1e; /* Darker background for chat area */
         border-radius: 8px;
         max-height: 400px;
+        min-height: 400px;
         overflow-y: auto;
-        box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); /* Subtle neon glow */
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.25); /* Subtle neon glow */
       }
 
-      .userDiv, .botDiv {
+      .userDiv, .botDiv { /* the positioning of the user and bot chats */
         padding: 8px 12px;
-        margin: 5px 0;
+        margin: 10px 0;
         border-radius: 5px;
-        max-width: 80%;
+        max-width: 100%;
+        white-space: pre-wrap; /* preserves line breaks within responses */
       }
 
-      .userDiv {
-        color: #00e676; /* Greenish color for user messages */
+      .userDiv { /* aesthetics for the user messages */
+        /* color: #00e676; */ /* Greenish color for user messages */
+        color: white;
         background-color: #1b5e20; /* Dark green background */
         align-self: flex-start;
       }
 
-      .botDiv {
-        color: #29b6f6; /* Light blue color for bot messages */
+      .botDiv { /* aesthetics for the bot messages */
+        /* color: #29b6f6; */ /* Light blue color for bot messages */
+        color: white;
         background-color: #0d47a1; /* Dark blue background */
         align-self: flex-end;
       }
 
-      #input_box {
+      #input_box { /* this box contains user_input and the send button */
         display: flex;
         gap: 10px;
         align-items: center;
         margin-top: 20px;
       }
 
-      #user_input {
-        width: 100%;
-        max-width: 600px;
+      #user_input { /* where the user types their prompt */
+        width: 150%;
+        max-width: 150%;
         padding: 10px;
         border: 1px solid #555;
         border-radius: 4px;
@@ -57,9 +62,11 @@
         color: #e0e0e0;
         font-size: 1rem;
         resize: none;
+        left: 100px;
+        box-sizing: border-box;
       }
 
-      button {
+      button { /* Button to send prompt to the AI, facilitates a response */
         padding: 20px 20px;
         background-color: #29b6f6; /* Accent color for button */
         color: #121212;
@@ -70,17 +77,27 @@
         transition: background-color 0.3s;
       }
 
-      button:hover {
+      button:hover { /* colors the send button to indicate that the user's mouse is over it */
         background-color: #00e676; /* Hover color for interactivity */
       }
 
       /* Scrollbar customization */
-      #chatbox::-webkit-scrollbar {
+      #chatbox::-webkit-scrollbar { 
         width: 8px;
       }
-      #chatbox::-webkit-scrollbar-thumb {
+      #chatbox::-webkit-scrollbar-thumb { 
         background-color: #29b6f6;
         border-radius: 4px;
+      }
+
+      /* positioning of pre-made theme buttons */
+      #theme-buttons {
+        margin-top: 10px;
+      }
+
+      #theme-buttons button {
+        padding: 10px 20px;
+        margin: 5px;
       }
     </style>
     
@@ -88,20 +105,32 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   </head>
   <body>
-      <label for="user_input">Enter Text:</label>
+    <label for="user_input">Please do not use this tool for academic dishonesty. This is a tech demo.</label> <!-- warning text displays -->
       <div id="input_box">
         <textarea id="user_input" name="messages" placeholder="Type your message here..." rows="2" cols="50"></textarea>
         <button type="button" value="Send" onclick="sendMessage()">Send</button>
       </div>
       <div id="chatbox"></div>
+      <div id="theme-buttons">
+        <button onclick="changeTheme('dark')">Dark</button>
+        <button onclick="changeTheme('light')">Light</button>
+        <button onclick="changeTheme('monochrome')">Monochrome</button>
+        <button onclick="changeTheme('retro')">Retro</button>
+        <button onclick="changeTheme('duck')">Duck</button>
+        <button onclick="changeTheme('cherry')">Cherry Blossom</button>
+      </div>
 
       <script>
+        var the_theme="light";
         var message_history = []
+        changeTheme(the_theme)
         document.getElementById("user_input").addEventListener("keydown", function (e) {
           if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            sendMessage();
-            scrollToBottom();
+            sendMessage()
+            var chatbox = document.getElementById("chatbox")
+            chatbox.scrollTop = chatbox.scrollHeight;
+            changeTheme(the_theme);
           }
         })
 
@@ -126,20 +155,115 @@
 
           // Call server and replace "..." with actual response
           google.script.run.withSuccessHandler(receiveMessage).publicAPICaller(message_history)
+          changeTheme(the_theme)
         }
 
         function receiveMessage(response) {
           var botDiv = document.querySelector(".botDiv:last-of-type")
+          var chatbox = document.getElementById("chatbox")
           message_history.push({role: "assistant", content: response})
           botDiv.textContent = "Bot: " + response
+          chatbox.scrollTop = chatbox.scrollHeight;
         }
-        let scrollableDiv = 
-            document.getElementById('scrollableDiv');
-
-        // Function to scroll to the bottom of the div
-        function scrollToBottom() {
-            scrollableDiv.scrollTop = scrollableDiv
-                .scrollHeight;
+        function changeTheme(theme) {
+          switch (theme) {
+            case 'dark':
+              the_theme='dark';
+              document.body.style.background = '#121212';
+              document.body.style.color = '#e0e0e0';
+              document.getElementById('chatbox').style.background = '#1e1e1e';
+              document.getElementById('user_input').style.background = '#333';
+              document.getElementById('user_input').style.color = '#e0e0e0';
+              document.querySelectorAll('.userDiv').forEach(div => {
+                div.style.background = '#1b5e20';
+                div.style.color = 'white';
+              });
+              document.querySelectorAll('.botDiv').forEach(div => {
+                div.style.background = '#0d47a1';
+                div.style.color = 'white';
+              });
+              break;
+            case 'light':
+              the_theme='light';
+              document.body.style.background = '#f0f0f0';
+              document.body.style.color = '#333';
+              document.getElementById('chatbox').style.background = '#e0e0e0';
+              document.getElementById('user_input').style.background = '#fff';
+              document.getElementById('user_input').style.color = '#333';
+              document.querySelectorAll('.userDiv').forEach(div => {
+                div.style.background = '#f7f7f7';
+                div.style.color = '#333';
+              });
+              document.querySelectorAll('.botDiv').forEach(div => {
+                div.style.background = '#add8e6';
+                div.style.color = '#333';
+              });
+              break;
+            case 'monochrome':
+              the_theme='monochrome';
+              document.body.style.background = '#000';
+              document.body.style.color = '#fff';
+              document.getElementById('chatbox').style.background = '#333';
+              document.getElementById('user_input').style.background = '#444';
+              document.getElementById('user_input').style.color = '#fff';
+              document.querySelectorAll('.userDiv').forEach(div => {
+                div.style.background = '#444';
+                div.style.color = '#fff';
+              });
+              document.querySelectorAll('.botDiv').forEach(div => {
+                div.style.background = '#666';
+                div.style.color = '#fff';
+              });
+              break;
+            case 'retro':
+              the_theme='retro';
+              document.body.style.background = '#00008b';
+              document.body.style.color = '#fff';
+              document.getElementById('chatbox').style.background = '#e0e0e0';
+              document.getElementById('user_input').style.background = '#e0e0e0';
+              document.getElementById('user_input').style.color = '#333';
+              document.querySelectorAll('.userDiv').forEach(div => {
+                div.style.background = '#ffffff';
+                div.style.color = '#333';
+              });
+              document.querySelectorAll('.botDiv').forEach(div => {
+                div.style.background = '#ff5599';
+                div.style.color = '#333';
+              });
+              break;
+            case 'duck':
+              the_theme='duck';
+              document.body.style.background = '#c2dfff';
+              document.body.style.color = '#333';
+              document.getElementById('chatbox').style.background = '#ffffff';
+              document.getElementById('user_input').style.background = '#ffffff';
+              document.getElementById('user_input').style.color = '#333';
+              document.querySelectorAll('.userDiv').forEach(div => {
+                div.style.background = '#ff9900';
+                div.style.color = '#333';
+              });
+              document.querySelectorAll('.botDiv').forEach(div => {
+                div.style.background = '#ffd801';
+                div.style.color = '#333';
+              });
+              break;
+            case 'cherry':
+              the_theme='cherry';
+              document.body.style.background = '#ffb7ad';
+              document.body.style.color = '#ffffff';
+              document.getElementById('chatbox').style.background = '#e0e0e0';
+              document.getElementById('user_input').style.background = '#ffffff';
+              document.getElementById('user_input').style.color = '#333';
+              document.querySelectorAll('.userDiv').forEach(div => {
+                div.style.background = '#ffffff';
+                div.style.color = '#333';
+              });
+              document.querySelectorAll('.botDiv').forEach(div => {
+                div.style.background = '#ffb7ad';
+                div.style.color = '#333';
+              });
+              break;
+          }
         }
       </script>
   </body>
