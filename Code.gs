@@ -1,31 +1,10 @@
-function objectToQueryParams(obj) {
-    return (
-      '?' +
-      Object.entries(obj)
-        .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`) //k = key, v = value
-        .join('&')
-    );
-  }
-
-function getID() {
-    return "TESTING"
-  }
-
 function doGet(e) {
-  //var response = UrlFetchApp.fetch("https://huggingface.co/dhiraj122/vivaai");
-  //return HtmlService.createHtmlOutput(response)
-  var app = HtmlService.createHtmlOutputFromFile("new_index")
-  //const id = getID() //get stuff from the other project, it will interface similarly, no logging
-
-  //var response = UrlFetchApp.fetch(ScriptApp.getService().getUrl(), smth)
-
-  //return HtmlService.createHtmlOutput("<iframe src='https://go.boarddocs.com/vsba/loudoun/Board.nsf/files/BRQ3VQ08B7BB/$file/Academies%20of%20Loudoun%20Admissions%202020_072020.pdf' title='test' width='100%' height='500px'>")
-  //Logger.log(e.parameter);
-  return HtmlService.createHtmlOutputFromFile('new_index');
-  //return HtmlService.createHtmlOutput("")
+  //var app = HtmlService.createHtmlOutputFromFile("new_index")
+  return HtmlService.createHtmlOutputFromFile('new_index'); //loads up the main index page
 }
 
-var messages = [{"role": "system", "content": "Follow what the user says."}] //changing this when the program actually works
+var system_prompt = "You are Aetherial AI, a helpful assistant utilizing OpenAI's gpt-4o-mini model to assist the user with whatever they ask. You are the first AI to utilize Google Apps Script as a backend for interfacing with the OpenAI API. Some advantages to using Google Apps Script over traditional systems are being able to covertly hide programs on Google Drive, reduce chances of having programs being blocked by schools or organizations, and allow programs to be easily spread on Google Drive, among others."
+var messages = [{"role": "system", "content": system_prompt}]
 const url = "https://api.openai.com/v1/chat/completions";
 const apiKey = "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" //add later
 
@@ -66,11 +45,11 @@ function publicAPICaller(message_history) {
   return makeAPICall_(message_history)
 }
 
-function testAPICaller() {
+function testAPICaller() { //this is for seeing if there's a bug with the publicAPICaller function
   return makeAPICall_([{role: "user", content: "Say this is probably a test."}])
 }
 
-function apiTest() {
+function apiTest() { //this just tests if the api key works
   const headers = {
     "Content-Type": "application/json",
     "Authorization": "Bearer " + apiKey,
@@ -86,7 +65,6 @@ function apiTest() {
   var response = UrlFetchApp.fetch(url, { "method": "POST",
                   "headers": headers,
                   "payload" : JSON.stringify(requestData),});
-  //var parsedResponse = JSON.parse()
   
   var data = JSON.parse(response.getContentText());
   Logger.log("raw response: " + data);
@@ -99,3 +77,7 @@ function apiTest() {
 function doPost(e) {
   return makeAPICall_(e.postData.message_history)
 }
+
+//function getID() {
+//    return "TESTING"
+//  }
